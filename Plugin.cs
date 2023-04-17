@@ -33,7 +33,7 @@ namespace TootTally.BackgroundDim
         private void TryInitialize()
         {
             // Bind to the TTModules Config for TootTally
-            ModuleConfigEnabled = TootTally.Plugin.Instance.Config.Bind("Modules", "BackgroundDim", true, "<insert module description here>");
+            ModuleConfigEnabled = TootTally.Plugin.Instance.Config.Bind("Modules", "Background Dim", true, "Adds an adjustable dim effect to the background.");
             // Attempt to add this module to the TTModules page in TrombSettings
             if (TootTally.Plugin.Instance.moduleSettings != null) OptionalTrombSettings.Add(TootTally.Plugin.Instance.moduleSettings, ModuleConfigEnabled);
             TootTally.Plugin.AddModule(this);
@@ -45,16 +45,14 @@ namespace TootTally.BackgroundDim
             ConfigFile config = new ConfigFile(configPath + CONFIG_NAME, true);
             option = new Options()
             {
-                // Set your config here by binding them to the related ConfigEntry in your Options class
-                // Example:
-                // Unlimited = config.Bind(CONFIG_FIELD, "Unlimited", DEFAULT_UNLISETTING)
+                DimAmount = config.Bind("General", "Background Dim Amount", 0.75f, "The amount to dim the background by as a percentage."),
+                //ShowBGOnBreak = config.Bind("General.Toggles", "No Dim on Break", true, "Reduce dimming when there are no notes to be played.") //WIP
             };
 
-            var settingsPage = OptionalTrombSettings.GetConfigPage("ModuleTemplate");
+            var settingsPage = OptionalTrombSettings.GetConfigPage("BG Dim");
             if (settingsPage != null) {
-                // Use OptionalTrombSettings to add your config to TrombSettings
-                // Example:
-                // OptionalTrombSettings.Add(settingsPage, option.Unlimited);
+                OptionalTrombSettings.AddSlider(settingsPage,0,1,0.05f,false, option.DimAmount);
+                //OptionalTrombSettings.Add(settingsPage, option.ShowBGOnBreak);
             }
 
             Harmony.CreateAndPatchAll(typeof(BackgroundDimController), PluginInfo.PLUGIN_GUID);
@@ -68,10 +66,11 @@ namespace TootTally.BackgroundDim
         }
 
         public class Options
-        {
-            // Fill this class up with ConfigEntry objects that define your configs
-            // Example:
-            // public ConfigEntry<bool> Unlimited { get; set; }
+        {            
+
+            public ConfigEntry<float> DimAmount { get; set; }
+            public ConfigEntry<bool> ShowBGOnBreak { get; set; }
+            
         }
     }
 }
