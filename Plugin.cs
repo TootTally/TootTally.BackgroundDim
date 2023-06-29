@@ -35,10 +35,7 @@ namespace TootTally.BackgroundDim
 
         private void TryInitialize()
         {
-            // Bind to the TTModules Config for TootTally
             ModuleConfigEnabled = TootTally.Plugin.Instance.Config.Bind("Modules", "Background Dim", true, "Adds an adjustable dim effect to the background.");
-            // Attempt to add this module to the TTModules page in TrombSettings
-            if (TootTally.Plugin.Instance.moduleSettings != null) OptionalTrombSettings.Add(TootTally.Plugin.Instance.moduleSettings, ModuleConfigEnabled);
             TootTally.Plugin.AddModule(this);
         }
 
