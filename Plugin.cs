@@ -5,6 +5,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System.IO;
 using TootTally.Utils;
+using TootTally.Utils.TootTallySettings;
 
 namespace TootTally.BackgroundDim
 {
@@ -15,7 +16,6 @@ namespace TootTally.BackgroundDim
         public static Plugin Instance;
 
         private const string CONFIG_NAME = "BackgroundName.cfg";
-        private const string CONFIG_FIELD = "BackgroundDim";
         public Options option;
         public ConfigEntry<bool> ModuleConfigEnabled { get; set; }
         public bool IsConfigInitialized { get; set; }
@@ -29,7 +29,7 @@ namespace TootTally.BackgroundDim
         {
             if (Instance != null) return;
             Instance = this;
-            
+
             GameInitializationEvent.Register(Info, TryInitialize);
         }
 
@@ -52,10 +52,10 @@ namespace TootTally.BackgroundDim
                 //ShowBGOnBreak = config.Bind("General.Toggles", "No Dim on Break", true, "Reduce dimming when there are no notes to be played.") //WIP
             };
 
-            var settingsPage = OptionalTrombSettings.GetConfigPage("BG Dim");
-            if (settingsPage != null) {
-                OptionalTrombSettings.AddSlider(settingsPage,0,1,0.05f,false, option.DimAmount);
-                //OptionalTrombSettings.Add(settingsPage, option.ShowBGOnBreak);
+            var settingsPage = TootTallySettingsManager.AddNewPage("BGDim", "Background Dim", 40, new UnityEngine.Color(.1f, .1f, .1f, .1f));
+            if (settingsPage != null)
+            {
+                settingsPage.AddSlider("DimSlider", 0, 1, 350, "Dim Amount", option.DimAmount, false);
             }
 
             Harmony.CreateAndPatchAll(typeof(BackgroundDimController), PluginInfo.PLUGIN_GUID);
@@ -69,11 +69,11 @@ namespace TootTally.BackgroundDim
         }
 
         public class Options
-        {            
+        {
 
             public ConfigEntry<float> DimAmount { get; set; }
             public ConfigEntry<bool> ShowBGOnBreak { get; set; }
-            
+
         }
     }
 }
