@@ -21,7 +21,7 @@ namespace TootTally.BackgroundDim
         public bool IsConfigInitialized { get; set; }
         public string Name { get => PluginInfo.PLUGIN_NAME; set => Name = value; }
         public ManualLogSource GetLogger { get => Logger; }
-
+        public static TootTallySettingPage settingPage;
         public void LogInfo(string msg) => Logger.LogInfo(msg);
         public void LogError(string msg) => Logger.LogError(msg);
 
@@ -49,10 +49,10 @@ namespace TootTally.BackgroundDim
                 //ShowBGOnBreak = config.Bind("General.Toggles", "No Dim on Break", true, "Reduce dimming when there are no notes to be played.") //WIP
             };
 
-            var settingsPage = TootTallySettingsManager.AddNewPage("BGDim", "Background Dim", 40, new UnityEngine.Color(.1f, .1f, .1f, .1f));
-            if (settingsPage != null)
+           settingPage = TootTallySettingsManager.AddNewPage("BGDim", "Background Dim", 40, new UnityEngine.Color(.1f, .1f, .1f, .1f));
+            if (settingPage != null)
             {
-                settingsPage.AddSlider("DimSlider", 0, 1, 350, "Dim Amount", option.DimAmount, false);
+                settingPage.AddSlider("DimSlider", 0, 1, 350, "Dim Amount", option.DimAmount, false);
             }
 
             Harmony.CreateAndPatchAll(typeof(BackgroundDimController), PluginInfo.PLUGIN_GUID);
@@ -62,6 +62,7 @@ namespace TootTally.BackgroundDim
         public void UnloadModule()
         {
             Harmony.UnpatchID(PluginInfo.PLUGIN_GUID);
+            settingPage.Remove();
             LogInfo($"Module unloaded!");
         }
 
